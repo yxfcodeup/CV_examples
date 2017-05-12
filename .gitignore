@@ -1,33 +1,24 @@
-# Object files
-*.o
-*.ko
-*.obj
-*.elf
+#以'#'开始的行，被视为注释.                                                          
+#以斜杠“/”开头表示目录；
+#以星号“*”通配多个字符；
+#以问号“?”通配单个字符；
+#以方括号“[]”包含单个字符的匹配列表；
+#以叹号“!”表示不忽略(跟踪)匹配到的文件或目录；
+#git 对于 .ignore
+#配置文件是按行从上到下进行规则匹配的，意味着如果前面的规则匹配的范围更大，则后面的规则将不会生效；
 
-# Precompiled Headers
-*.gch
-*.pch
+# 1. 忽略掉所有文件名是 foo.txt的文件.
+#foo.txt
 
-# Libraries
-*.lib
-*.a
-*.la
-*.lo
+# 2. 忽略所有生成的 html文件,
+#*.html
 
-# Shared objects (inc. Windows DLLs)
-*.dll
-*.so
-*.so.*
-*.dylib
+# 3. foo.html是手工维护的，所以例外.
+#!foo.html
 
-# Executables
-*.exe
-*.out
-*.app
-*.i*86
-*.x86_64
-*.hex
+# 4. 忽略所有.o和 .a文件.
+#*.[oa]
 
-# Debug files
-*.dSYM/
-*.su
+
+#---------------------------------------------------
+
