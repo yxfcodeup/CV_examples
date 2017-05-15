@@ -561,7 +561,7 @@ cmake -DBUILD_DOCS=ON \
 -DENABLE_AVX=ON \
 -DPYTHON3_EXECUTABLE=$(which python3) \
 -DPYTHON3_INCLUDE_DIR=$(python3 -c "from distutils.sysconfig import get_python_inc; print(get_python_inc())") \
--DPYTHON3_PACKAGES_PATH=$(python3 -c "from distutils.sysconfig iport get_python_lib; print(get_python_lib())") \
+-DPYTHON3_PACKAGES_PATH=$(python3 -c "from distutils.sysconfig import get_python_lib; print(get_python_lib())") \
 -DCMAKE_BUILD_TYPE=RELEASE \
 -DCMAKE_INSTALL_PREFIX=$(python3 -c "import sys; print(sys.prefix)") ..
 
