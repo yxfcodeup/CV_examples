@@ -1,5 +1,4 @@
 # CV_examples
-This is my CV examples
 
 ## Python OpenCV
 [python opencv](./PythonOpenCV/README.md)
@@ -31,13 +30,13 @@ sudo ldconfig
 
 ## Compile Opencv-3.2 to Python3 on Ubuntu 16.04
 ### Prereqs
-sudo apt-get install --assume-yes build-essential cmake git
-sudo apt-get install --assume-yes build-essential pkg-config unzip ffmpeg qtbase5-dev
-sudo apt-get install --assume-yes libopencv-dev libgtk-3-dev libdc1394-22 libdc1394-22-dev libjpeg-dev libpng12-dev libtiff5-dev libjasper-dev
-sudo apt-get install --assume-yes libavcodec-dev libavformat-dev libswscale-dev libxine2-dev libgstreamer0.10-dev libgstreamer-plugins-base0.10-dev
-sudo apt-get install --assume-yes libv4l-dev libtbb-dev libfaac-dev libmp3lame-dev libopencore-amrnb-dev libopencore-amrwb-dev libtheora-dev
-sudo apt-get install --assume-yes libvorbis-dev libxvidcore-dev v4l-utils
-sudo pip3 install numpy
+sudo apt-get install --assume-yes build-essential cmake git  
+sudo apt-get install --assume-yes build-essential pkg-config unzip ffmpeg qtbase5-dev  
+sudo apt-get install --assume-yes libopencv-dev libgtk-3-dev libdc1394-22 libdc1394-22-dev libjpeg-dev libpng12-dev libtiff5-dev libjasper-dev  
+sudo apt-get install --assume-yes libavcodec-dev libavformat-dev libswscale-dev libxine2-dev libgstreamer0.10-dev libgstreamer-plugins-base0.10-dev  
+sudo apt-get install --assume-yes libv4l-dev libtbb-dev libfaac-dev libmp3lame-dev libopencore-amrnb-dev libopencore-amrwb-dev libtheora-dev  
+sudo apt-get install --assume-yes libvorbis-dev libxvidcore-dev v4l-utils  
+sudo pip3 install numpy  
 
 ## cmake options
 
@@ -573,7 +572,7 @@ python3 -c "import cv2; print(cv2.__version__)"
 
 ## NOTE
 ### MKL, IPP, TBB, ATLAS, BLAS, LAPACK
-关于矩阵库的选择，使用Python时安装numpy，如要高性能，可参考“[矩阵运算库blas, cblas, openblas, atlas, lapack, mkl之间有什么关系，在性能上区别大吗？](https://www.zhihu.com/question/27872849)”
+关于矩阵库的选择，使用Python时安装numpy，如要高性能，可参考“[矩阵运算库blas, cblas, openblas, atlas, lapack, mkl之间有什么关系，在性能上区别大吗？](https://www.zhihu.com/question/27872849)”  
 
 ## References
 1. [Install OpenCV 3.1 and Python 2.7 on CentOS 7](http://www.computervisiononline.com/blog/install-opencv-31-and-python-27-centos-7)
