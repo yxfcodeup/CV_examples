@@ -7,8 +7,8 @@ from PIL import Image
 from pylab import *
 from matplotlib import pyplot as plt
 
-img1 = cv2.imread("./ScarlettJohansson.jpg")
-img2 = Image.open("./ScarlettJohansson.jpg").convert("RGB")
+img1 = cv2.imread("./ss.jpg")
+img2 = Image.open("./ss.jpg").convert("RGB")
 img3 = np.array(img2)
 img3 = img3[: , : , ::-1].copy()
 img4 = np.zeros(img1.shape , img1.dtype)

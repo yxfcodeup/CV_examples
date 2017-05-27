@@ -1,0 +1,30 @@
+!_TAG_FILE_FORMAT	2	/extended format; --format=1 will not append ;" to lines/
+!_TAG_FILE_SORTED	1	/0=unsorted, 1=sorted, 2=foldcase/
+!_TAG_PROGRAM_AUTHOR	Darren Hiebert	/dhiebert@users.sourceforge.net/
+!_TAG_PROGRAM_NAME	Exuberant Ctags	//
+!_TAG_PROGRAM_URL	http://ctags.sourceforge.net	/official site/
+!_TAG_PROGRAM_VERSION	5.8	//
+Image	/home/ployo/gitCloneWorkspace/yxfcodeup/CV_examples/PythonOpenCV/BasicTutorial/cv2plt.py	/^from PIL import Image$/;"	i	language:Python
+Image	/home/ployo/gitCloneWorkspace/yxfcodeup/CV_examples/PythonOpenCV/BasicTutorial/imtools.py	/^from PIL import Image$/;"	i	language:Python
+calcAndDrawHist	/home/ployo/gitCloneWorkspace/yxfcodeup/CV_examples/PythonOpenCV/BasicTutorial/imtools.py	/^        def calcAndDrawHist(img , color) :$/;"	f	language:Python	function:histogram	access:public
+cv2	/home/ployo/gitCloneWorkspace/yxfcodeup/CV_examples/PythonOpenCV/BasicTutorial/cv2plt.py	/^import cv2$/;"	i	language:Python
+cv2	/home/ployo/gitCloneWorkspace/yxfcodeup/CV_examples/PythonOpenCV/BasicTutorial/imtools.py	/^import cv2$/;"	i	language:Python
+cv2PIL	/home/ployo/gitCloneWorkspace/yxfcodeup/CV_examples/PythonOpenCV/BasicTutorial/imtools.py	/^def cv2PIL(image , flag="BGR2RGB") :$/;"	f	language:Python	access:public
+h	/home/ployo/gitCloneWorkspace/yxfcodeup/CV_examples/PythonOpenCV/BasicTutorial/imtools.py	/^h = histogram(img , flag="GRAY")$/;"	v	language:Python
+histogram	/home/ployo/gitCloneWorkspace/yxfcodeup/CV_examples/PythonOpenCV/BasicTutorial/imtools.py	/^def histogram(cv_img , flag="GRAY") :$/;"	f	language:Python	access:public
+img	/home/ployo/gitCloneWorkspace/yxfcodeup/CV_examples/PythonOpenCV/BasicTutorial/imtools.py	/^img = cv2.imread(".\/ss.jpg")$/;"	v	language:Python
+img1	/home/ployo/gitCloneWorkspace/yxfcodeup/CV_examples/PythonOpenCV/BasicTutorial/cv2plt.py	/^img1 = cv2.imread(".\/ss.jpg")$/;"	v	language:Python
+img2	/home/ployo/gitCloneWorkspace/yxfcodeup/CV_examples/PythonOpenCV/BasicTutorial/cv2plt.py	/^img2 = Image.open(".\/ss.jpg").convert("RGB")$/;"	v	language:Python
+img3	/home/ployo/gitCloneWorkspace/yxfcodeup/CV_examples/PythonOpenCV/BasicTutorial/cv2plt.py	/^img3 = img3[: , : , ::-1].copy()$/;"	v	language:Python
+img3	/home/ployo/gitCloneWorkspace/yxfcodeup/CV_examples/PythonOpenCV/BasicTutorial/cv2plt.py	/^img3 = np.array(img2)$/;"	v	language:Python
+img4	/home/ployo/gitCloneWorkspace/yxfcodeup/CV_examples/PythonOpenCV/BasicTutorial/cv2plt.py	/^img4 = np.zeros(img1.shape , img1.dtype)$/;"	v	language:Python
+ims	/home/ployo/gitCloneWorkspace/yxfcodeup/CV_examples/PythonOpenCV/BasicTutorial/cv2plt.py	/^ims = plt.imshow(img4)$/;"	v	language:Python
+ims	/home/ployo/gitCloneWorkspace/yxfcodeup/CV_examples/PythonOpenCV/BasicTutorial/imtools.py	/^ims = plt.imshow(h)$/;"	v	language:Python
+np	/home/ployo/gitCloneWorkspace/yxfcodeup/CV_examples/PythonOpenCV/BasicTutorial/cv2plt.py	/^import numpy as np$/;"	i	language:Python
+np	/home/ployo/gitCloneWorkspace/yxfcodeup/CV_examples/PythonOpenCV/BasicTutorial/imtools.py	/^import numpy as np$/;"	i	language:Python
+os	/home/ployo/gitCloneWorkspace/yxfcodeup/CV_examples/PythonOpenCV/BasicTutorial/cv2plt.py	/^import os$/;"	i	language:Python
+os	/home/ployo/gitCloneWorkspace/yxfcodeup/CV_examples/PythonOpenCV/BasicTutorial/imtools.py	/^import os$/;"	i	language:Python
+plt	/home/ployo/gitCloneWorkspace/yxfcodeup/CV_examples/PythonOpenCV/BasicTutorial/cv2plt.py	/^from matplotlib import pyplot as plt$/;"	i	language:Python
+plt	/home/ployo/gitCloneWorkspace/yxfcodeup/CV_examples/PythonOpenCV/BasicTutorial/imtools.py	/^from matplotlib import pyplot as plt$/;"	i	language:Python
+sys	/home/ployo/gitCloneWorkspace/yxfcodeup/CV_examples/PythonOpenCV/BasicTutorial/cv2plt.py	/^import sys$/;"	i	language:Python
+sys	/home/ployo/gitCloneWorkspace/yxfcodeup/CV_examples/PythonOpenCV/BasicTutorial/imtools.py	/^import sys$/;"	i	language:Python
