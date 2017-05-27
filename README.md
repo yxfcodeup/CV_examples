@@ -12,7 +12,7 @@ sudo yum install opencv opencv-core opencv-devel opencv-devel-docs opencv-python
 ### Prereqs
 sudo yum-builddep -y opencv-devel  
 sudo yum install cmake git pkgconfig libpng-devel libjpeg-turbo-devel jasper-devel openexr-devel libtiff-devel libwebp-devel libdc1394-devel libv4l-devel gstreamer-plugins-base-devel gtk2-devel tbb-devel eigen3-devel   
-sudo pip install numpy  
+sudo pip install numpy Pillow matplotlib
 
 ### Compile Opencv-3.2
 git clone https://github.com/opencv/opencv.git  
