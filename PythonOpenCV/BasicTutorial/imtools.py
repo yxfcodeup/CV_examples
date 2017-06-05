@@ -22,9 +22,17 @@ def cv2PIL(image , flag="BGR2RGB") :
         print("flag must be 'BGR2RGB' or 'RGB2BGR'")
         return False
 
+#------------------------------------------------------------------------------
+# 直方图数据
+# @param cv_img 通过cv2.imread读取的图片，未经过灰度处理
+# @param flag
+# @return 
+# NOTICE:
+#------------------------------------------------------------------------------
 def histogram(cv_img , flag="GRAY") :
     if "GRAY" == flag :
-        hist = cv2.calcHist([cv_img] ,  
+        gray_img = cv2.cvtColor(cv_img , cv2.COLOR_BGR2GRAY)
+        hist = cv2.calcHist([gray_img] ,  
                 [0] ,           #使用的通道  
                 None ,          #没有使用mask  
                 [256] ,         #HistSize  
@@ -62,12 +70,33 @@ def histogram(cv_img , flag="GRAY") :
         print("flag must be 'GRAY' or 'BGR' or 'MULTICOLOR'")
         return False
             
-img = cv2.imread("./ss.jpg")
+img = cv2.imread("./saber_cos.jpg")
+#img = cv2.imread("./saber_cos.jpg" , 0)    #直接读为灰度图像
 
-h = histogram(img , flag="MULTICOLOR")
-h = cv2PIL(h , flag="BGR2RGB")
+#hist_cv = cv2.calcHist([img] , [0] , None , [256] , [0,256])
+#hist_np , bins = np.histogram(img.ravel() , 256 , [0,256])
+#hist_np2 = np.bincount(img.ravel() , minlength=256)
 
-ims = plt.imshow(h)
+#hist = histogram(img , flag="GRAY")
+hb , hg , hr = histogram(img , flag="BGR")
+img = cv2PIL(img , flag="BGR2RGB")
+
+plt.subplot(221)
+plt.imshow(img , "gray")
+#plt.subplot(222)
+#plt.plot(hist_cv)
+#plt.subplot(223)
+#plt.plot(hist_np)
+#plt.subplot(224)
+#plt.plot(hist_np2)
+#plt.subplot(222)
+#plt.plot(hist)
+plt.subplot(222)
+plt.plot(hb)
+plt.subplot(223)
+plt.plot(hg)
+plt.subplot(224)
+plt.plot(hr)
 plt.show()
 
 #cv2.imshow('colorhist',h)
