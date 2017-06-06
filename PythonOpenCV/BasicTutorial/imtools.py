@@ -146,5 +146,78 @@ def testHistogram() :
     #cv2.waitKey(0)
 
 
+def erodeDilate(cv_img) :
+    kernel = cv2.getStructuringElement(cv2.MORPH_RECT , (9,9))  #opencv定义的结构元素
+    #kernel = np.uint8(np.ones((9,9)))  #numpy定义的结构函数，与上等同
+    eroded = cv2.erode(cv_img , kernel)    #腐蚀图像
+    dilated = cv2.dilate(cv_img , kernel)  #膨胀图像
+    return (eroede , dilated)
+
+
+#开运算：去除较小的明亮区域
+#闭运算：消除低亮度值的孤立点
+def openCloseOP(cv_img) :
+    kernel = cv2.getStructuringElement(cv2.MORPH_RECT , (9,9))
+    opened = cv2.morphologyEx(cv_img , cv2.MORPH_OPEN , kernel)
+    #closed = cv2.morphologyEx(cv_img , cv2.MORPH_CLOSE , kernel)
+    closed = cv2.morphologyEx(opened , cv2.MORPH_CLOSE , kernel)
+    return (opened , closed)
+
+
+"""
+形态学检测边缘的原理很简单，在膨胀时，图像中的物体会想周围“扩张”；腐蚀时，图像中的物体会“收缩”。比较这两幅图像，由于其变化的区域只发生在边缘。所以这时将两幅图像相减，得到的就是图像中物体的边缘。
+"""
+def checkEdge(cv_img) :
+    kernel = cv2.getStructuringElement(cv2.MORPH_RECT , (3,3))
+    dilate = cv2.dilate(cv_img , kernel)
+    erode = cv2.erode(cv_img , kernel)
+    res = cv2.absdiff(dilate , erode)   #将两幅图像相减获得边，第一个参数是膨胀后的图像，第二个参数是腐蚀后的图像
+    ret_val , res = cv2.threshold(res , 40 , 255 , cv2.THRESH_BINARY)   #上面得到的结果是灰度图，将其二值化以便更清楚的观察结果
+    res = cv2.bitwise_not(res)  #反色，即对二值图每个像素取反
+    return res
+
+
+"""
+与边缘检测不同，拐角的检测的过程稍稍有些复杂。但原理相同，所不同的是先用十字形的结构元素膨胀像素，这种情况下只会在边缘处“扩张”，角点不发生变化。接着用菱形的结构元素腐蚀原图像，导致只有在拐角处才会“收缩”，而直线边缘都未发生变化。
+第二步是用X形膨胀原图像，角点膨胀的比边要多。这样第二次用方块腐蚀时，角点恢复原状，而边要腐蚀的更多。所以当两幅图像相减时，只保留了拐角处。
+"""
+def checkCorner(cv_img) :
+    #构造5×5的结构元素，分别为十字形、菱形、方形和X型
+    cross = cv2.getStructuringElement(cv2.MORPH_CROSS , (5,5))
+    diamond = cv2.getStructuringElement(cv2.MORPH_RECT , (5,5))
+    diamond[0, 0] = 0
+    diamond[0, 1] = 0
+    diamond[1, 0] = 0
+    diamond[4, 4] = 0
+    diamond[4, 3] = 0
+    diamond[3, 4] = 0
+    diamond[4, 0] = 0
+    diamond[4, 1] = 0
+    diamond[3, 0] = 0
+    diamond[0, 3] = 0
+    diamond[0, 4] = 0
+    diamond[1, 4] = 0
+    square = cv2.getStructuringElement(cv2.MORPH_RECT , (5,5))
+    x_shape = cv2.getStructuringElement(cv2.MORPH_CROSS , (5,5))
+
+    res1 = cv2.dilate(cv_img , cross)
+    res1 = cv2.erode(res1 , diamond)
+    res2 = cv2.dilate(cv_img , x_shape)
+    res2 = cv2.erode(res2 , square)
+    res = cv2.absdiff(res2 , res1)
+    ret_val , result = cv2.threshold(result , 40 , 255 , cv2.THRESH_BINARY)
+
+    for j in range(result.size) :
+        y = j / result.shape[0]
+        x = j % result.shape[0]
+        if 255 == result[x , y] :
+            cv2.circle(cv_image , (y,x))
+
+
 if "__main__" == __name__ :
     #testHistogram()
+    img = cv2.imread("./saber_cos.jpg" , 0)
+    a = checkEdge(img)
+    cv2.imshow("a" , a)
+    cv2.waitKey(0)
+    cv2.destroyAllWindows()
