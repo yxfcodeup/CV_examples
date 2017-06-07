@@ -6,27 +6,7 @@ import numpy as np
 from PIL import Image
 from matplotlib import pyplot as plt
 
-#------------------------------------------------------------------------------
-# 直方图
-# @param image 三通道图片
-# @param flag BGR2RGB/RGB2BGR
-# @return image
-# NOTICE:
-#------------------------------------------------------------------------------
-def cv2PIL(image , flag="BGR2RGB") :
-    if "BGR2RGB" == flag :
-        img = np.zeros(image.shape , image.dtype)
-        img[: , : , 0] = image[: , : , 2]
-        img[: , : , 1] = image[: , : , 1]
-        img[: , : , 2] = image[: , : , 0]
-        return img
-    elif "RGB2BGR" == flag :
-        img = np.array(image)
-        img = img[: , : , ::-1].copy()
-        return img
-    else :
-        print("flag must be 'BGR2RGB' or 'RGB2BGR'")
-        return False
+from basics import cv2PIL
 
 #------------------------------------------------------------------------------
 # 直方图
@@ -90,7 +70,54 @@ def histogram(cv_img , flag="GRAY" , is_img=False) :
     else :
         print("flag must be 'GRAY' or 'BGR' or 'MULTICOLOR'")
         return False
-            
+
+def splitImage(img , part_size=(0,0)) :
+    if (0,0) == part_size :
+        return img
+    ph , pw = part_size
+    h , w = (img.shape)[:2]
+    if w % pw == h % ph == 0 :
+        print("error")
+        return img
+
+    all_sub_imgs = list()
+    for i in range(0 , h , ph) :
+        for j in range(0 , w , pw) :
+            sub_img = img[i:i+ph , j:j+pw]
+            all_sub_imgs.append(sub_img)
+    return all_sub_imgs
+
+
+#------------------------------------------------------------------------------
+# 使用直方图计算两图片的相似度
+# @param cv_img1 通过cv2.imread读取的图片，未经过灰度处理
+# @param cv_img2 通过cv2.imread读取的图片，未经过灰度处理
+# @param size 将图片重新制定大小，默认为不指定，(height , length)
+# @return 相似度，1.0为完全相似，0为完全不相似
+# NOTICE:
+#------------------------------------------------------------------------------
+def calcSimilarHist(cv_img1 , cv_img2 , size=(0,0) , part_size=(0,0)) :
+    if (0,0) != size :
+        cv_img1 = cv2.resize(cv_img1 , size)
+        cv_img2 = cv2.resize(cv_img2 , size)
+    hb1 , hg1 , hr1 = histogram(cv_img1 , flag="BGR")
+    hb2 , hg2 , hr2 = histogram(cv_img2 , flag="BGR")
+    x = (np.concatenate((hb1 , hg1 , hr1) , axis=0))[: , 0]
+    y = (np.concatenate((hb2 , hg2 , hr2) , axis=0))[: , 0]
+    if len(x) != len(y) :
+        print(len(x) , " != " , len(y))
+        return False
+    data = []
+    for i in range(len(x)) :
+        if x[i] != y[i] :
+            r = 1 - abs(x[i] - y[i]) / max(x[i] , y[i])
+            data.append(r)
+        else :
+            data.append(1)
+    res = sum(data) / len(x)
+    return res
+
+
 def testHistogram() :
     img = cv2.imread("./saber_cos.jpg")
     #img = cv2.imread("./saber_cos.jpg" , 0)    #直接读为灰度图像
@@ -145,83 +172,18 @@ def testHistogram() :
     #cv2.imshow("hist_r" , hr)
     #cv2.waitKey(0)
 
-
-def erodeDilate(cv_img) :
-    kernel = cv2.getStructuringElement(cv2.MORPH_RECT , (9,9))  #opencv定义的结构元素
-    #kernel = np.uint8(np.ones((9,9)))  #numpy定义的结构函数，与上等同
-    eroded = cv2.erode(cv_img , kernel)    #腐蚀图像
-    dilated = cv2.dilate(cv_img , kernel)  #膨胀图像
-    return (eroede , dilated)
-
-
-#开运算：去除较小的明亮区域
-#闭运算：消除低亮度值的孤立点
-def openCloseOP(cv_img) :
-    kernel = cv2.getStructuringElement(cv2.MORPH_RECT , (9,9))
-    opened = cv2.morphologyEx(cv_img , cv2.MORPH_OPEN , kernel)
-    #closed = cv2.morphologyEx(cv_img , cv2.MORPH_CLOSE , kernel)
-    closed = cv2.morphologyEx(opened , cv2.MORPH_CLOSE , kernel)
-    return (opened , closed)
-
-
-"""
-形态学检测边缘的原理很简单，在膨胀时，图像中的物体会想周围“扩张”；腐蚀时，图像中的物体会“收缩”。比较这两幅图像，由于其变化的区域只发生在边缘。所以这时将两幅图像相减，得到的就是图像中物体的边缘。
-"""
-def checkEdge(cv_img) :
-    kernel = cv2.getStructuringElement(cv2.MORPH_RECT , (3,3))
-    dilate = cv2.dilate(cv_img , kernel)
-    erode = cv2.erode(cv_img , kernel)
-    res = cv2.absdiff(dilate , erode)   #将两幅图像相减获得边，第一个参数是膨胀后的图像，第二个参数是腐蚀后的图像
-    ret_val , res = cv2.threshold(res , 40 , 255 , cv2.THRESH_BINARY)   #上面得到的结果是灰度图，将其二值化以便更清楚的观察结果
-    res = cv2.bitwise_not(res)  #反色，即对二值图每个像素取反
-    return res
-
-
-"""
-与边缘检测不同，拐角的检测的过程稍稍有些复杂。但原理相同，所不同的是先用十字形的结构元素膨胀像素，这种情况下只会在边缘处“扩张”，角点不发生变化。接着用菱形的结构元素腐蚀原图像，导致只有在拐角处才会“收缩”，而直线边缘都未发生变化。
-第二步是用X形膨胀原图像，角点膨胀的比边要多。这样第二次用方块腐蚀时，角点恢复原状，而边要腐蚀的更多。所以当两幅图像相减时，只保留了拐角处。
-"""
-def checkCorner(cv_img) :
-    #构造5×5的结构元素，分别为十字形、菱形、方形和X型
-    cross = cv2.getStructuringElement(cv2.MORPH_CROSS , (5,5))
-    diamond = cv2.getStructuringElement(cv2.MORPH_RECT , (5,5))
-    diamond[0, 0] = 0
-    diamond[0, 1] = 0
-    diamond[1, 0] = 0
-    diamond[4, 4] = 0
-    diamond[4, 3] = 0
-    diamond[3, 4] = 0
-    diamond[4, 0] = 0
-    diamond[4, 1] = 0
-    diamond[3, 0] = 0
-    diamond[0, 3] = 0
-    diamond[0, 4] = 0
-    diamond[1, 4] = 0
-    square = cv2.getStructuringElement(cv2.MORPH_RECT , (5,5))
-    x_shape = cv2.getStructuringElement(cv2.MORPH_CROSS , (5,5))
-
-    res1 = cv2.dilate(cv_img , cross)
-    res1 = cv2.erode(res1 , diamond)
-    res2 = cv2.dilate(cv_img , x_shape)
-    res2 = cv2.erode(res2 , square)
-    res = cv2.absdiff(res2 , res1)  #将两幅闭运算的图像相减获得角
-    ret_val , result = cv2.threshold(res , 40 , 255 , cv2.THRESH_BINARY) #使用阈值获得二值图
-
-    #在原图上用半径为5的圆圈将点标出
-    print(result.shape)
-    print(result[628 , 903])
-    for x in range(result.shape[0]) :
-        for y in range(result.shape[1]) :
-            if 255 == result[x , y] :
-                cv2.circle(cv_img , (y,x) , 5 , (255,0,0))
-    return cv_img
-
-
 if "__main__" == __name__ :
-    #testHistogram()
-    img = cv2.imread("./diamonds.jpg" , 0)
-    #a = checkEdge(img)
-    a = checkCorner(img)
-    cv2.imshow("a" , a)
+    img1 = cv2.imread("./t1.jpg")
+    img2 = cv2.imread("./t2.jpg")
+    #a = calcSimilarHist(img1 , img2)
+    subs = splitImage(img1 , (100 , 100))
+    cv2.imshow("img1" , img1)
+    cv2.imshow("subs[0]" , subs[0])
     cv2.waitKey(0)
-    cv2.destroyAllWindows()
+    #h1 = histogram(img1 , flag="MULTICOLOR" , is_img=True)
+    #h2 = histogram(img2 , flag="MULTICOLOR" , is_img=True)
+    #plt.subplot(221)
+    #plt.imshow(h1)
+    #plt.subplot(222)
+    #plt.imshow(h2)
+    #plt.show()
