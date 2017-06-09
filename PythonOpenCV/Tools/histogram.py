@@ -77,7 +77,8 @@ def splitImage(img , part_size=(0,0)) :
     ph , pw = part_size
     h , w = (img.shape)[:2]
     if w % pw == h % ph == 0 :
-        print("error")
+        print(w , pw , h , ph)
+        print("ERROR: split imgae error!")
         return img
 
     all_sub_imgs = list()
@@ -93,10 +94,11 @@ def splitImage(img , part_size=(0,0)) :
 # @param cv_img1 通过cv2.imread读取的图片，未经过灰度处理
 # @param cv_img2 通过cv2.imread读取的图片，未经过灰度处理
 # @param size 将图片重新制定大小，默认为不指定，(height , length)
+# @param part_size
 # @return 相似度，1.0为完全相似，0为完全不相似
 # NOTICE:
 #------------------------------------------------------------------------------
-def calcSimilarHist(cv_img1 , cv_img2 , size=(0,0) , part_size=(0,0)) :
+def calcSimilarHist(cv_img1 , cv_img2 , size=(0,0)) :
     if (0,0) != size :
         cv_img1 = cv2.resize(cv_img1 , size)
         cv_img2 = cv2.resize(cv_img2 , size)
@@ -115,6 +117,47 @@ def calcSimilarHist(cv_img1 , cv_img2 , size=(0,0) , part_size=(0,0)) :
         else :
             data.append(1)
     res = sum(data) / len(x)
+    return res
+
+
+#------------------------------------------------------------------------------
+# 使用直方图计算两图片的相似度
+# @param cv_img1 通过cv2.imread读取的图片，未经过灰度处理
+# @param cv_img2 通过cv2.imread读取的图片，未经过灰度处理
+# @param size 将图片重新制定大小，默认为不指定，(height , length)
+# @param part_size 子图片大小，默认为不分割，(height , length)
+# @param is_normal 是否以较小图片置为同一宽高，默认为是。
+# @return 相似度，1.0为完全相似，0为完全不相似
+# NOTICE:
+#------------------------------------------------------------------------------
+def calcSimilarHistSplit(cv_img1 , cv_img2 , size=(0,0) , part_size=(0,0) , is_normal=True) :
+    res = 0
+    minh = cv_img1.shape[0]
+    minl = cv_img1.shape[1]
+    if (0,0) == part_size :
+        res = calcSimilarHist(cv_img1 , cv_img2 , size)
+    else :
+        if cv_img1.shape != cv_img2.shape :
+            if cv_img1.shape[2] != cv_img2.shape[2] :
+                print("WARNING: Channels of two images are not equal!")
+                return 0
+            if cv_img1.shape[0] * cv_img2.shape[1] != cv_img1.shape[1] * cv_img2.shape[0] :
+                print("WARNING: Height and length is not proportionable!")
+                return 0
+            else :
+                minh = min(cv_img1.shape[0] , cv_img2.shape[0])
+                minl = min(cv_img1.shape[1] , cv_img2.shape[1])
+                cv_img1 = cv2.resize(cv_img1 , (minh , minl))
+                cv_img2 = cv2.resize(cv_img2 , (minh , minl))
+        sub1 = splitImage(cv_img1 , part_size)
+        sub2 = splitImage(cv_img2 , part_size)
+        sub_num = 0
+        for im1 , im2 in zip(sub1 , sub2) :
+            sub_num += 1
+            res += calcSimilarHist(im1 , im2 , size)
+        x = minl / part_size[1]
+        y = minh / part_size[0]
+        res = res / sub_num
     return res
 
 
@@ -175,11 +218,22 @@ def testHistogram() :
 if "__main__" == __name__ :
     img1 = cv2.imread("./t1.jpg")
     img2 = cv2.imread("./t2.jpg")
-    #a = calcSimilarHist(img1 , img2)
-    subs = splitImage(img1 , (100 , 100))
-    cv2.imshow("img1" , img1)
-    cv2.imshow("subs[0]" , subs[0])
-    cv2.waitKey(0)
+    a = calcSimilarHistSplit(img1 , img2 , (0,0) , (50,50))
+    b = calcSimilarHistSplit(img1 , img2 , (0,0) , (0,0))
+    i = 1
+    while True :
+        if i*10 > min(min(img1.shape[0] , img1.shape[1]) , min(img2.shape[0] , img2.shape[1])) :
+            break
+        a = calcSimilarHistSplit(img1 , img2 , (0,0) , (i*10+1 , i*10+1))
+        i += 1
+        print(a , "\t" , b , "\t" , a-b)
+    #subs1 = splitImage(img1 , (100 , 100))
+    #subs2 = splitImage(img2 , (100 , 100))
+    #cv2.imshow("img2" , img2)
+    #cv2.imshow("img1" , img1)
+    #cv2.imshow("subs1[0]" , subs1[0])
+    #cv2.imshow("subs2[0]" , subs2[0])
+    #cv2.waitKey(0)
     #h1 = histogram(img1 , flag="MULTICOLOR" , is_img=True)
     #h2 = histogram(img2 , flag="MULTICOLOR" , is_img=True)
     #plt.subplot(221)
