@@ -72,7 +72,7 @@ def hammingDistance(obj1 , obj2) :
 # @return hamming距离值，值越大相似度越小
 # NOTICE:
 #------------------------------------------------------------------------------
-def aHash(cv_img1 , cv_img2 , size=(8,8) , exact=25) :
+def aHash(cv_img1 , cv_img2 , size=(8,8)) :
     img1 = cv2.resize(cv_img1 , size)
     gray1 = cv2.cvtColor(img1 , cv2.COLOR_BGR2GRAY)
     #avg1 = gray1.sum() / reduct(lambda x,y:x*y , list(gray1.shape))
@@ -84,17 +84,45 @@ def aHash(cv_img1 , cv_img2 , size=(8,8) , exact=25) :
     hdist = hammingDistance(hash1 , hash2)
     return hdist
 
-def dHash() :
-    pass
+
+#------------------------------------------------------------------------------
+# 感知hash法(aHash)计算两图片相似度，采用DCT(离散余弦变换)来降低频率的方法，精度大于aHash
+# @param cv_img1 通过cv2.imread读取的图片，未经过灰度处理
+# @param cv_img2 通过cv2.imread读取的图片，未经过灰度处理
+# @param size 缩放大小，默认把图片统一缩放到32*32，便于DCT计算
+# @return hamming距离值，值越大相似度越小
+# NOTICE:
+#------------------------------------------------------------------------------
+def pHash(cv_img1 , cv_img2 , size=(32,32)) :
+    img1 = cv2.resize(cv_img1 , size)
+    img2 = cv2.resize(cv_img2 , size)
+    gray1 = cv2.cvtColor(img1 , cv2.COLOR_BGR2GRAY)
+    gray2 = cv2.cvtColor(img2 , cv2.COLOR_BGR2GRAY)
+    dct1 = cv2.dct(np.float32(gray1))
+    dct2 = cv2.dct(np.float32(gray2))
+    #取左上角8*8，这些代表图片的最低频率
+    dct1_roi = dct1[:8 , :8]
+    dct2_roi = dct2[:8 , :8]
+    hash1 = getImageHash(dct1_roi)
+    hash2 = getImageHash(dct2_roi)
+    hdist = hammingDistance(hash1 , hash2)
+    return hdist
 
 
-def pHash() :
-    pass
-
+def dHash(cv_img1 , cv_img2) :
+    img1 = cv2.resize(cv_img1 , (8,9))
+    img2 = cv2.resize(cv_img2 , (8,9))
+    gray1 = cv2.cvtColor(img1 , cv2.COLOR_BGR2GRAY)
+    gray2 = cv2.cvtColor(img2 , cv2.COLOR_BGR2GRAY)
+    for h in range(8) :
+        for w in range(9) :
+            pass
 
 
 if "__main__" == __name__ :
     img1 = cv2.imread("./t1.jpg")
     img2 = cv2.imread("./t2.jpg")
     a = aHash(img1 , img2)
+    b = pHash(img1 , img2)
     print(a)
+    print(b)
