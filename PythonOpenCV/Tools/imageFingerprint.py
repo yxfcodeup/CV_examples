@@ -6,8 +6,14 @@ import cv2
 import numpy as np
 from PIL import Image
 from matplotlib import pyplot as plt
-
 from basics import cv2PIL
+
+
+"""
+aHash：速度比较快，但是常常不太精确。
+pHash：精确度比较高，但是速度方面较差一些。
+dHash：精确度较高，且速度也非常快。常用此方法用来做图片判重
+"""
 
 
 #------------------------------------------------------------------------------
@@ -109,14 +115,31 @@ def pHash(cv_img1 , cv_img2 , size=(32,32)) :
     return hdist
 
 
-def dHash(cv_img1 , cv_img2) :
-    img1 = cv2.resize(cv_img1 , (8,9))
-    img2 = cv2.resize(cv_img2 , (8,9))
+#------------------------------------------------------------------------------
+# 差异值hash法(dHash)计算两图片相似度
+# @param cv_img1 通过cv2.imread读取的图片，未经过灰度处理
+# @param cv_img2 通过cv2.imread读取的图片，未经过灰度处理
+# @param rows 图片缩放后行数，列数通过行数计算，默认为8
+# @return hamming距离值，值越大相似度越小
+# NOTICE: 一般来说，汉明距离小于5，基本就是同一张图片
+#------------------------------------------------------------------------------
+def dHash(cv_img1 , cv_img2 , rows=8) :
+    cols = rows + 1
+    # 1.缩放图片
+    img1 = cv2.resize(cv_img1 , (cols , rows))
+    img2 = cv2.resize(cv_img2 , (cols , rows))
+    # 2.灰度化
     gray1 = cv2.cvtColor(img1 , cv2.COLOR_BGR2GRAY)
     gray2 = cv2.cvtColor(img2 , cv2.COLOR_BGR2GRAY)
-    for h in range(8) :
-        for w in range(9) :
-            pass
+    # 3.差异计算，比较相邻像素，并构成二进制hash字符串
+    hash1 = str()
+    hash2 = str()
+    for h in range(rows) :
+        for w in range(rows) :
+            hash1 += "1" if gray1[h , w] > gray1[h , w+1] else "0"
+            hash2 += "1" if gray2[h , w] > gray2[h , w+1] else "0"
+    hdist = hammingDistance(hash1 , hash2)
+    return hdist
 
 
 if "__main__" == __name__ :
@@ -124,5 +147,7 @@ if "__main__" == __name__ :
     img2 = cv2.imread("./t2.jpg")
     a = aHash(img1 , img2)
     b = pHash(img1 , img2)
+    c = dHash(img1 , img2)
     print(a)
     print(b)
+    print(c)
